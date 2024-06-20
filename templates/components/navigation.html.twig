@@ -1,0 +1,17 @@
+<nav>
+    <ul>
+        <li><a href="{{ path('home') }}">Accueil</a></li>
+        <li><a href="{{ path('about') }}">À propos</a></li>
+        <li><a href="{{ path('contact') }}">Contact</a></li>
+        <li><a href="{{ path('post_index') }}">Articles</a></li>
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            <li><a href="{{ path('profile') }}">Profil</a></li>
+            {% if is_granted('ROLE_ADMIN') %}
+                <li><a href="{{ path('admin_dashboard') }}">Tableau de bord</a></li>
+            {% endif %}
+            <li><a href="{{ path('logout') }}">Déconnexion</a></li>
+        {% else %}
+            <li><a href="{{ path('login') }}">Connexion</a></li>
+        {% endif %}
+    </ul>
+</nav>

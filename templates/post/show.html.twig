@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>{{ post.title }}</h1>
+    <p>{{ post.content }}</p>
+    <h2>Comments</h2>
+    <ul>
+        {% for comment in post.comments %}
+            <li>{{ comment.content }} - by {{ comment.author.username }}</li>
+        {% endfor %}
+    </ul>
+    <form action="{{ path('comment_add', {'postId': post.id}) }}" method="post">
+        {{ form_start(commentForm) }}
+        {{ form_widget(commentForm) }}
+        <button type="submit">Add Comment</button>
+        {{ form_end(commentForm) }}
+    </form>
+{% endblock %}
