@@ -31,14 +31,14 @@ class Comment
     private ?User $author = null;
 
     /**
-     * @var Collection<int, CommentLike>
+     * @var Collection<int, CommentFeedback>
      */
-    #[ORM\OneToMany(targetEntity: CommentLike::class, mappedBy: 'comment', orphanRemoval: true)]
-    private Collection $commentLikes;
+    #[ORM\OneToMany(targetEntity: CommentFeedback::class, mappedBy: 'comment', orphanRemoval: true)]
+    private Collection $commentFeedback;
 
     public function __construct()
     {
-        $this->commentLikes = new ArrayCollection();
+        $this->commentFeedback = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -98,32 +98,46 @@ class Comment
     }
 
     /**
-     * @return Collection<int, CommentLike>
+     * @return Collection<int, CommentFeedback>
      */
-    public function getCommentLikes(): Collection
+    public function getCommentFeedback(): Collection
     {
-        return $this->commentLikes;
+        return $this->commentFeedback;
     }
 
-    public function addCommentLike(CommentLike $commentLike): static
+    public function addCommentFeedback(CommentFeedback $commentFeedback): static
     {
-        if (!$this->commentLikes->contains($commentLike)) {
-            $this->commentLikes->add($commentLike);
-            $commentLike->setComment($this);
+        if (!$this->commentFeedback->contains($commentFeedback)) {
+            $this->commentFeedback->add($commentFeedback);
+            $commentFeedback->setComment($this);
         }
 
         return $this;
     }
 
-    public function removeCommentLike(CommentLike $commentLike): static
+    public function removeCommentFeedback(CommentFeedback $commentFeedback): static
     {
-        if ($this->commentLikes->removeElement($commentLike)) {
+        if ($this->commentFeedback->removeElement($commentFeedback)) {
             // set the owning side to null (unless already changed)
-            if ($commentLike->getComment() === $this) {
-                $commentLike->setComment(null);
+            if ($commentFeedback->getComment() === $this) {
+                $commentFeedback->setComment(null);
             }
         }
 
         return $this;
+    }
+
+    public function countLikes(): int
+    {
+        return $this->commentFeedback->filter(function(CommentFeedback $feedback) {
+            return $feedback->getType() === 'like';
+        })->count();
+    }
+
+    public function countDislikes(): int
+    {
+        return $this->commentFeedback->filter(function(CommentFeedback $feedback) {
+            return $feedback->getType() === 'dislike';
+        })->count();
     }
 }

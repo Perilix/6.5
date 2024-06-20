@@ -3,16 +3,37 @@
 {% block body %}
     <h1>{{ post.title }}</h1>
     <p>{{ post.content }}</p>
-    <h2>Comments</h2>
+    <div>
+        <form action="{{ path('post_like', {'id': post.id}) }}" method="post" style="display:inline;">
+            <button type="submit" {% if post.author.id == app.user.id %}disabled{% endif %}>Like</button>
+        </form>
+        <span>{{ post.countLikes() }} likes</span>
+        <form action="{{ path('post_dislike', {'id': post.id}) }}" method="post" style="display:inline;">
+            <button type="submit" {% if post.author.id == app.user.id %}disabled{% endif %}>Dislike</button>
+        </form>
+        <span>{{ post.countDislikes() }} dislikes</span>
+    </div>
+    <h2>Commentaires</h2>
     <ul>
         {% for comment in post.comments %}
-            <li>{{ comment.content }} - by {{ comment.author.username }}</li>
+            <li>
+                {{ comment.content }} - par {{ comment.author.username }} le {{ comment.createdAt|date('d/m/Y H:i') }}
+                <div>
+                    <form action="{{ path('comment_like', {'id': comment.id}) }}" method="post" style="display:inline;">
+                        <button type="submit" {% if comment.author.id == app.user.id %}disabled{% endif %}>Like</button>
+                    </form>
+                    <span>{{ comment.countLikes() }} likes</span>
+                    <form action="{{ path('comment_dislike', {'id': comment.id}) }}" method="post" style="display:inline;">
+                        <button type="submit" {% if comment.author.id == app.user.id %}disabled{% endif %}>Dislike</button>
+                    </form>
+                    <span>{{ comment.countDislikes() }} dislikes</span>
+                </div>
+            </li>
         {% endfor %}
     </ul>
-    <form action="{{ path('comment_add', {'postId': post.id}) }}" method="post">
+    <form action="{{ path('post_show', {'id': post.id}) }}" method="post">
         {{ form_start(commentForm) }}
         {{ form_widget(commentForm) }}
-        <button type="submit">Add Comment</button>
         {{ form_end(commentForm) }}
     </form>
 {% endblock %}

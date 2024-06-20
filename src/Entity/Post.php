@@ -10,6 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Post
 {
     #[ORM\Id]
@@ -37,19 +38,28 @@ class Post
     /**
      * @var Collection<int, Comment>
      */
-    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'article')]
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'post')]
     private Collection $comments;
 
+
     /**
-     * @var Collection<int, PostLike>
+     * @var Collection<int, PostFeedback>
      */
-    #[ORM\OneToMany(targetEntity: PostLike::class, mappedBy: 'post', orphanRemoval: true)]
-    private Collection $postLikes;
+    #[ORM\OneToMany(targetEntity: PostFeedback::class, mappedBy: 'post')]
+    private Collection $postFeedback;
 
     public function __construct()
     {
         $this->comments = new ArrayCollection();
-        $this->postLikes = new ArrayCollection();
+        $this->postFeedback = new ArrayCollection();
+    }
+
+    #[ORM\PrePersist]
+    public function initializeCreatedAt(): void
+    {
+        if ($this->createdAt === null) {
+            $this->createdAt = new DateTimeImmutable();
+        }
     }
 
     public function getId(): ?int
@@ -81,19 +91,14 @@ class Post
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    /**
-     * @ORM\PrePersist
-     */
-    public function setCreatedAt(): void
+    public function setCreatedAt(?DateTimeImmutable $createdAt): void
     {
-        if ($this->createdAt === null) {
-            $this->createdAt = new DateTimeImmutable();
-        }
+        $this->createdAt = $createdAt;
     }
 
     public function getCategory(): ?Category
@@ -151,32 +156,46 @@ class Post
     }
 
     /**
-     * @return Collection<int, PostLike>
+     * @return Collection<int, PostFeedback>
      */
-    public function getPostLikes(): Collection
+    public function getPostFeedback(): Collection
     {
-        return $this->postLikes;
+        return $this->postFeedback;
     }
 
-    public function addPostLike(PostLike $postLike): static
+    public function addPostFeedback(PostFeedback $postFeedback): static
     {
-        if (!$this->postLikes->contains($postLike)) {
-            $this->postLikes->add($postLike);
-            $postLike->setPost($this);
+        if (!$this->postFeedback->contains($postFeedback)) {
+            $this->postFeedback->add($postFeedback);
+            $postFeedback->setPost($this);
         }
 
         return $this;
     }
 
-    public function removePostLike(PostLike $postLike): static
+    public function removePostFeedback(PostFeedback $postFeedback): static
     {
-        if ($this->postLikes->removeElement($postLike)) {
+        if ($this->postFeedback->removeElement($postFeedback)) {
             // set the owning side to null (unless already changed)
-            if ($postLike->getPost() === $this) {
-                $postLike->setPost(null);
+            if ($postFeedback->getPost() === $this) {
+                $postFeedback->setPost(null);
             }
         }
 
         return $this;
+    }
+
+    public function countLikes(): int
+    {
+        return $this->postFeedback->filter(function(PostFeedback $feedback) {
+            return $feedback->getType() === 'like';
+        })->count();
+    }
+
+    public function countDislikes(): int
+    {
+        return $this->postFeedback->filter(function(PostFeedback $feedback) {
+            return $feedback->getType() === 'dislike';
+        })->count();
     }
 }

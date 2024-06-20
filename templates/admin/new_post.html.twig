@@ -4,6 +4,6 @@
     <h1>Create New Post</h1>
     {{ form_start(form) }}
     {{ form_widget(form) }}
-    <button type="submit">Enregistrer</button>
     {{ form_end(form) }}
+    <a href="{{ path('admin_category_new') }}" class="btn btn-primary">Créer une nouvelle catégorie</a>
 {% endblock %}

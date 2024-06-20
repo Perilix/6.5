@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\CommentFeedback;
 use App\Entity\CommentLike;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -13,39 +14,71 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class CommentController extends AbstractController
 {
-    #[Route('/comment/add/{postId}', name: 'comment_add')]
-    public function add(Request $request, $postId, PostRepository $postRepository, EntityManagerInterface $em): RedirectResponse
+    #[Route('/comment/{id}/like', name: 'comment_like', methods: ['POST'])]
+    public function like(Comment $comment, EntityManagerInterface $em): RedirectResponse
     {
-        $post = $postRepository->find($postId);
-        if (!$post) {
-            throw $this->createNotFoundException('Post not found');
+        $user = $this->getUser();
+
+        if ($comment->getAuthor() === $user) {
+            return $this->redirectToRoute('post_show', ['id' => $comment->getPost()->getId()]);
         }
 
-        $comment = new Comment();
-        $comment->setContent($request->request->get('content'));
-        $comment->setPost($post);
-        $comment->setAuthor($this->getUser());
-        $comment->setCreatedAt(new \DateTimeImmutable());
+        $existingFeedback = $em->getRepository(CommentFeedback::class)->findOneBy([
+            'comment' => $comment,
+            'user' => $user,
+        ]);
 
-        $em->persist($comment);
+        if ($existingFeedback) {
+            if ($existingFeedback->getType() === 'like') {
+                $em->remove($existingFeedback);
+            } else {
+                $existingFeedback->setType('like');
+                $em->persist($existingFeedback);
+            }
+        } else {
+            $feedback = new CommentFeedback();
+            $feedback->setComment($comment);
+            $feedback->setUser($user);
+            $feedback->setType('like');
+
+            $em->persist($feedback);
+        }
+
         $em->flush();
 
-        return $this->redirectToRoute('post_show', ['id' => $postId]);
+        return $this->redirectToRoute('post_show', ['id' => $comment->getPost()->getId()]);
     }
 
-    #[Route('/comment/{id}/like', name: 'comment_like', methods: ['POST'])]
-    public function like($id, EntityManagerInterface $em): RedirectResponse
+    #[Route('/comment/{id}/dislike', name: 'comment_dislike', methods: ['POST'])]
+    public function dislike(Comment $comment, EntityManagerInterface $em): RedirectResponse
     {
-        $comment = $em->getRepository(Comment::class)->find($id);
-        if (!$comment) {
-            throw $this->createNotFoundException('Comment not found');
+        $user = $this->getUser();
+
+        if ($comment->getAuthor() === $user) {
+            return $this->redirectToRoute('post_show', ['id' => $comment->getPost()->getId()]);
         }
 
-        $like = new CommentLike();
-        $like->setComment($comment);
-        $like->setUser($this->getUser());
+        $existingFeedback = $em->getRepository(CommentFeedback::class)->findOneBy([
+            'comment' => $comment,
+            'user' => $user,
+        ]);
 
-        $em->persist($like);
+        if ($existingFeedback) {
+            if ($existingFeedback->getType() === 'dislike') {
+                $em->remove($existingFeedback);
+            } else {
+                $existingFeedback->setType('dislike');
+                $em->persist($existingFeedback);
+            }
+        } else {
+            $feedback = new CommentFeedback();
+            $feedback->setComment($comment);
+            $feedback->setUser($user);
+            $feedback->setType('dislike');
+
+            $em->persist($feedback);
+        }
+
         $em->flush();
 
         return $this->redirectToRoute('post_show', ['id' => $comment->getPost()->getId()]);

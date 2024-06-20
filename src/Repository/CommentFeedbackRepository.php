@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\CommentLike;
+use App\Entity\CommentFeedback;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CommentLike>
+ * @extends ServiceEntityRepository<CommentFeedback>
  */
-class CommentLikeRepository extends ServiceEntityRepository
+class CommentFeedbackRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CommentLike::class);
+        parent::__construct($registry, CommentFeedback::class);
     }
 
     //    /**
-    //     * @return CommentLike[] Returns an array of CommentLike objects
+    //     * @return CommentFeedback[] Returns an array of CommentFeedback objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class CommentLikeRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?CommentLike
+    //    public function findOneBySomeField($value): ?CommentFeedback
     //    {
     //        return $this->createQueryBuilder('c')
     //            ->andWhere('c.exampleField = :val')

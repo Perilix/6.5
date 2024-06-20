@@ -43,27 +43,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'author')]
     private Collection $comments;
 
-    /**
-     * @var Collection<int, PostLike>
-     */
-    #[ORM\OneToMany(targetEntity: PostLike::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $postLikes;
-
-    /**
-     * @var Collection<int, CommentLike>
-     */
-    #[ORM\OneToMany(targetEntity: CommentLike::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $commentLikes;
-
     #[ORM\Column]
     private bool $isVerified = false;
+
+    /**
+     * @var Collection<int, PostFeedback>
+     */
+    #[ORM\OneToMany(targetEntity: PostFeedback::class, mappedBy: 'user')]
+    private Collection $postFeedback;
+
+    /**
+     * @var Collection<int, CommentFeedback>
+     */
+    #[ORM\OneToMany(targetEntity: CommentFeedback::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $commentFeedback;
 
     public function __construct()
     {
         $this->posts = new ArrayCollection();
         $this->comments = new ArrayCollection();
-        $this->postLikes = new ArrayCollection();
-        $this->commentLikes = new ArrayCollection();
+        $this->postFeedback = new ArrayCollection();
+        $this->commentFeedback = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -192,66 +192,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, PostLike>
-     */
-    public function getPostLikes(): Collection
-    {
-        return $this->postLikes;
-    }
-
-    public function addPostLike(PostLike $postLike): static
-    {
-        if (!$this->postLikes->contains($postLike)) {
-            $this->postLikes->add($postLike);
-            $postLike->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removePostLike(PostLike $postLike): static
-    {
-        if ($this->postLikes->removeElement($postLike)) {
-            // set the owning side to null (unless already changed)
-            if ($postLike->getUser() === $this) {
-                $postLike->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, CommentLike>
-     */
-    public function getCommentLikes(): Collection
-    {
-        return $this->commentLikes;
-    }
-
-    public function addCommentLike(CommentLike $commentLike): static
-    {
-        if (!$this->commentLikes->contains($commentLike)) {
-            $this->commentLikes->add($commentLike);
-            $commentLike->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCommentLike(CommentLike $commentLike): static
-    {
-        if ($this->commentLikes->removeElement($commentLike)) {
-            // set the owning side to null (unless already changed)
-            if ($commentLike->getUser() === $this) {
-                $commentLike->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function isVerified(): bool
     {
         return $this->isVerified;
@@ -260,6 +200,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PostFeedback>
+     */
+    public function getPostFeedback(): Collection
+    {
+        return $this->postFeedback;
+    }
+
+    public function addPostFeedback(PostFeedback $postFeedback): static
+    {
+        if (!$this->postFeedback->contains($postFeedback)) {
+            $this->postFeedback->add($postFeedback);
+            $postFeedback->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePostFeedback(PostFeedback $postFeedback): static
+    {
+        if ($this->postFeedback->removeElement($postFeedback)) {
+            // set the owning side to null (unless already changed)
+            if ($postFeedback->getUser() === $this) {
+                $postFeedback->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentFeedback>
+     */
+    public function getCommentFeedback(): Collection
+    {
+        return $this->commentFeedback;
+    }
+
+    public function addCommentFeedback(CommentFeedback $commentFeedback): static
+    {
+        if (!$this->commentFeedback->contains($commentFeedback)) {
+            $this->commentFeedback->add($commentFeedback);
+            $commentFeedback->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentFeedback(CommentFeedback $commentFeedback): static
+    {
+        if ($this->commentFeedback->removeElement($commentFeedback)) {
+            // set the owning side to null (unless already changed)
+            if ($commentFeedback->getUser() === $this) {
+                $commentFeedback->setUser(null);
+            }
+        }
 
         return $this;
     }

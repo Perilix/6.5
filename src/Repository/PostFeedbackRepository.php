@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\PostLike;
+use App\Entity\PostFeedback;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<PostLike>
+ * @extends ServiceEntityRepository<PostFeedback>
  */
-class PostLikeRepository extends ServiceEntityRepository
+class PostFeedbackRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, PostLike::class);
+        parent::__construct($registry, PostFeedback::class);
     }
 
     //    /**
-    //     * @return PostLike[] Returns an array of PostLike objects
+    //     * @return PostFeedback[] Returns an array of PostFeedback objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class PostLikeRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?PostLike
+    //    public function findOneBySomeField($value): ?PostFeedback
     //    {
     //        return $this->createQueryBuilder('p')
     //            ->andWhere('p.exampleField = :val')

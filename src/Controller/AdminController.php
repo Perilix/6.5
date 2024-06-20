@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
+use App\Form\CategoryType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,6 +35,25 @@ class AdminController extends AbstractController
         }
 
         return $this->render('admin/new_post.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/admin/category/new', name: 'admin_category_new')]
+    public function newCategory(Request $request, EntityManagerInterface $em): Response
+    {
+        $category = new Category();
+        $form = $this->createForm(CategoryType::class, $category);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($category);
+            $em->flush();
+
+            return $this->redirectToRoute('admin_post_new');
+        }
+
+        return $this->render('admin/new_category.html.twig', [
             'form' => $form->createView(),
         ]);
     }
