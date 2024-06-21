@@ -10,6 +10,14 @@
                     <span class="like-count">{{ post.countLikes() }} likes</span>
                     <span class="dislike-count">{{ post.countDislikes() }} dislikes</span>
                 </div>
+                <p>
+                    {% if post.content|length > 200 %}
+                        {{ post.content[:200] ~ '...' }}
+                    {% else %}
+                        {{ post.content }}
+                    {% endif %}
+                    <a href="{{ path('post_show', {'id': post.id}) }}">lire la suite</a>
+                </p>
             </li>
         {% endfor %}
     </ul>
