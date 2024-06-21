@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Gérer les utilisateurs</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Rôles</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.roles|json_encode }}</td>
+                <td>
+                    <form action="{{ path('admin_user_ban', {'id': user.id}) }}" method="post" style="display:inline;">
+                        <button type="submit" {% if user.isBanned %}disabled{% endif %}>Bannir</button>
+                    </form>
+                    <form action="{{ path('admin_user_unban', {'id': user.id}) }}" method="post" style="display:inline;">
+                        <button type="submit" {% if not user.isBanned %}disabled{% endif %}>Débannir</button>
+                    </form>
+                    <form action="{{ path('admin_user_roles', {'id': user.id}) }}" method="post" style="display:inline;">
+                        <select name="roles[]" multiple>
+                            <option value="ROLE_ADMIN" {% if 'ROLE_ADMIN' in user.roles %}selected{% endif %}>Administrateur</option>
+                        </select>
+                        <button type="submit">Mettre à jour les rôles</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

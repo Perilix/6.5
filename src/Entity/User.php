@@ -58,6 +58,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: CommentFeedback::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $commentFeedback;
 
+    #[ORM\Column]
+    private ?bool $banned = false;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
@@ -201,6 +204,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->isVerified = $isVerified;
 
+        if ($isVerified) {
+            $this->addRole('ROLE_USER_REGISTERED');
+        }
+
+        return $this;
+    }
+
+    public function addRole(string $role): self
+    {
+        if (!in_array($role, $this->roles)) {
+            $this->roles[] = $role;
+        }
+
         return $this;
     }
 
@@ -260,6 +276,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $commentFeedback->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isBanned(): ?bool
+    {
+        return $this->banned;
+    }
+
+    public function setBanned(bool $banned): self
+    {
+        $this->banned = $banned;
 
         return $this;
     }

@@ -4,7 +4,13 @@
     <h1>Nos derniers articles</h1>
     <ul>
         {% for post in posts %}
-            <li><a href="{{ path('post_show', {'id': post.id}) }}">{{ post.title }}</a></li>
+            <li>
+                <a href="{{ path('post_show', {'id': post.id}) }}">{{ post.title }}</a>
+                <div>
+                    <span class="like-count">{{ post.countLikes() }} likes</span>
+                    <span class="dislike-count">{{ post.countDislikes() }} dislikes</span>
+                </div>
+            </li>
         {% endfor %}
     </ul>
 {% endblock %}

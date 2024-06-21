@@ -3,17 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Comment;
+use App\Entity\Post;
 use App\Entity\PostFeedback;
 use App\Form\CommentType;
+use App\Form\PostType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\PostRepository;
-use App\Entity\Post;
-use App\Entity\PostLike;
-use App\Form\PostType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
+use App\Repository\PostRepository;
 
 class PostController extends AbstractController
 {
@@ -31,13 +30,16 @@ class PostController extends AbstractController
     public function show(Post $post, Request $request, EntityManagerInterface $em): Response
     {
         $comment = new Comment();
-        $commentForm = $this->createForm(CommentType::class, $comment);
-        $commentForm->handleRequest($request);
+        $isVerifiedUser = $this->isGranted('ROLE_USER_REGISTERED');
+        $commentForm = $this->createForm(CommentType::class, $comment, [
+            'is_verified_user' => $isVerifiedUser,
+        ]);
 
+        $commentForm->handleRequest($request);
         if ($commentForm->isSubmitted() && $commentForm->isValid()) {
             $comment->setPost($post);
             $comment->setAuthor($this->getUser());
-            $comment->setCreatedAt();
+            $comment->setCreatedAt(new \DateTimeImmutable());
 
             $em->persist($comment);
             $em->flush();
@@ -76,7 +78,11 @@ class PostController extends AbstractController
     {
         $user = $this->getUser();
 
-        // Check if the user has already given feedback on the post
+        if (!$this->isGranted('ROLE_USER_REGISTERED')) {
+            $this->addFlash('error', 'Vous devez valider votre email pour effectuer cette action.');
+            return $this->redirectToRoute('post_show', ['id' => $post->getId()]);
+        }
+
         $existingFeedback = $em->getRepository(PostFeedback::class)->findOneBy([
             'post' => $post,
             'user' => $user,
@@ -108,7 +114,11 @@ class PostController extends AbstractController
     {
         $user = $this->getUser();
 
-        // Check if the user has already given feedback on the post
+        if (!$this->isGranted('ROLE_USER_REGISTERED')) {
+            $this->addFlash('error', 'Vous devez valider votre email pour effectuer cette action.');
+            return $this->redirectToRoute('post_show', ['id' => $post->getId()]);
+        }
+
         $existingFeedback = $em->getRepository(PostFeedback::class)->findOneBy([
             'post' => $post,
             'user' => $user,

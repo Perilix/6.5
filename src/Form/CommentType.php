@@ -13,15 +13,24 @@ class CommentType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $isVerifiedUser = $options['is_verified_user'];
+
         $builder
-            ->add('content', TextareaType::class, ['label' => false])
-            ->add('save', SubmitType::class, ['label' => 'Ajouter']);
+            ->add('content', TextareaType::class, [
+                'label' => false,
+                'attr' => !$isVerifiedUser ? ['disabled' => 'disabled', 'title' => 'Vous devez valider votre e-mail pour pouvoir poster un commentaire'] : [],
+            ])
+            ->add('save', SubmitType::class, [
+                'label' => 'Ajouter',
+                'attr' => !$isVerifiedUser ? ['disabled' => 'disabled', 'title' => 'Vous devez valider votre e-mail pour pouvoir poster un commentaire'] : [],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Comment::class,
+            'is_verified_user' => false,
         ]);
     }
 }

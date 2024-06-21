@@ -4,36 +4,53 @@
     <h1>{{ post.title }}</h1>
     <p>{{ post.content }}</p>
     <div>
-        <form action="{{ path('post_like', {'id': post.id}) }}" method="post" style="display:inline;">
-            <button type="submit" {% if post.author.id == app.user.id %}disabled{% endif %}>Like</button>
-        </form>
-        <span>{{ post.countLikes() }} likes</span>
-        <form action="{{ path('post_dislike', {'id': post.id}) }}" method="post" style="display:inline;">
-            <button type="submit" {% if post.author.id == app.user.id %}disabled{% endif %}>Dislike</button>
-        </form>
-        <span>{{ post.countDislikes() }} dislikes</span>
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            <form action="{{ path('post_like', {'id': post.id}) }}" method="post">
+                <button type="submit" class="like-btn" {% if not is_granted('ROLE_USER_REGISTERED') %}disabled title="Vous devez valider votre e-mail pour pouvoir interagir"{% endif %}>Like</button>
+            </form>
+            <span class="like-count">{{ post.countLikes() }} likes</span>
+            <form action="{{ path('post_dislike', {'id': post.id}) }}" method="post">
+                <button type="submit" class="dislike-btn" {% if not is_granted('ROLE_USER_REGISTERED') %}disabled title="Vous devez valider votre e-mail pour pouvoir interagir"{% endif %}>Dislike</button>
+            </form>
+            <span class="dislike-count">{{ post.countDislikes() }} dislikes</span>
+        {% else %}
+            <span class="like-count">{{ post.countLikes() }} likes</span>
+            <span class="dislike-count">{{ post.countDislikes() }} dislikes</span>
+        {% endif %}
     </div>
     <h2>Commentaires</h2>
-    <ul>
+    <ul id="comment-list">
         {% for comment in post.comments %}
             <li>
                 {{ comment.content }} - par {{ comment.author.username }} le {{ comment.createdAt|date('d/m/Y H:i') }}
                 <div>
-                    <form action="{{ path('comment_like', {'id': comment.id}) }}" method="post" style="display:inline;">
-                        <button type="submit" {% if comment.author.id == app.user.id %}disabled{% endif %}>Like</button>
-                    </form>
-                    <span>{{ comment.countLikes() }} likes</span>
-                    <form action="{{ path('comment_dislike', {'id': comment.id}) }}" method="post" style="display:inline;">
-                        <button type="submit" {% if comment.author.id == app.user.id %}disabled{% endif %}>Dislike</button>
-                    </form>
-                    <span>{{ comment.countDislikes() }} dislikes</span>
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') and comment.author.id != app.user.id %}
+                        <form action="{{ path('comment_like', {'id': comment.id}) }}" method="post">
+                            <button type="submit" class="comment-like-btn" {% if not is_granted('ROLE_USER_REGISTERED') %}disabled title="Vous devez valider votre e-mail pour pouvoir interagir"{% endif %}>Like</button>
+                        </form>
+                        <span class="comment-like-count">{{ comment.countLikes() }} likes</span>
+                        <form action="{{ path('comment_dislike', {'id': comment.id}) }}" method="post">
+                            <button type="submit" class="comment-dislike-btn" {% if not is_granted('ROLE_USER_REGISTERED') %}disabled title="Vous devez valider votre e-mail pour pouvoir interagir"{% endif %}>Dislike</button>
+                        </form>
+                        <span class="comment-dislike-count">{{ comment.countDislikes() }} dislikes</span>
+                    {% else %}
+                        <span class="comment-like-count">{{ comment.countLikes() }} likes</span>
+                        <span class="comment-dislike-count">{{ comment.countDislikes() }} dislikes</span>
+                    {% endif %}
                 </div>
             </li>
         {% endfor %}
     </ul>
-    <form action="{{ path('post_show', {'id': post.id}) }}" method="post">
-        {{ form_start(commentForm) }}
-        {{ form_widget(commentForm) }}
-        {{ form_end(commentForm) }}
-    </form>
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <form id="comment-form" action="{{ path('post_show', {'id': post.id}) }}" method="post">
+            {{ form_start(commentForm) }}
+            {{ form_widget(commentForm) }}
+            {{ form_end(commentForm) }}
+        </form>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/comments.js') }}"></script>
 {% endblock %}
