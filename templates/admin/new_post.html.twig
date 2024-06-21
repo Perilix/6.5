@@ -6,9 +6,9 @@
     <h1>Publier un nouvel article</h1>
     {{ form_start(form) }}
     {{ form_widget(form) }}
+    <a href="{{ path('admin_category_new') }}" class="btn btn-primary">Ajouter une catégorie</a>
     <button type="submit">Publier</button>
     {{ form_end(form) }}
-    <a href="{{ path('admin_category_new') }}" class="btn btn-primary">Créer une nouvelle catégorie</a>
 {% endblock %}
 
 {% block javascripts %}

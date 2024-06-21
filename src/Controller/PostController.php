@@ -19,8 +19,12 @@ class PostController extends AbstractController
     #[Route('/posts', name: 'post_index')]
     public function index(PostRepository $postRepository, Request $request): Response
     {
-        $searchTerm = $request->query->get('search');
-        $posts = $searchTerm ? $postRepository->findBySearchTerm($searchTerm) : $postRepository->findAll();
+        $searchTerm = $request->query->get('search', '');
+        $criteria = $request->query->get('criteria', 'date');
+        $order = $request->query->get('order', 'desc');
+
+        $posts = $postRepository->findByCriteria($criteria, $order, $searchTerm);
+
         return $this->render('post/index.html.twig', [
             'posts' => $posts,
         ]);

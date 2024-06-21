@@ -3,7 +3,17 @@
 {% block body %}
     <h1>Toutes les actualités</h1>
     <form method="get">
-        <input type="text" name="search" placeholder="Recherche par mot clé">
+        <input type="text" name="search" placeholder="Recherche par mot clé" value="{{ app.request.query.get('search') }}">
+        <select name="criteria">
+            <option value="date" {% if app.request.query.get('criteria') == 'date' %}selected{% endif %}>Date</option>
+            <option value="category" {% if app.request.query.get('criteria') == 'category' %}selected{% endif %}>Catégorie</option>
+            <option value="likes" {% if app.request.query.get('criteria') == 'likes' %}selected{% endif %}>Likes</option>
+            <option value="dislikes" {% if app.request.query.get('criteria') == 'dislikes' %}selected{% endif %}>Dislikes</option>
+        </select>
+        <select name="order">
+            <option value="asc" {% if app.request.query.get('order') == 'asc' %}selected{% endif %}>Ascendant</option>
+            <option value="desc" {% if app.request.query.get('order') == 'desc' %}selected{% endif %}>Descendant</option>
+        </select>
         <button type="submit">Recherche</button>
     </form>
     <ul>
