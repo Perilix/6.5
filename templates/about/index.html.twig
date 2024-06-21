@@ -1,6 +1,52 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/about.css') }}">
+{% endblock %}
+
 {% block body %}
+    <div class="container">
     <h1>À propos de nous</h1>
-    <p>Bienvenue sur notre site.</p>
+    <p>Nous sommes Cuissot-lecoeuche Till, Juppet Hugo, et Dietschy Julien, des étudiants travaillant sur un projet pour l'école.</p>
+    
+    <h2>Projet Symfony</h2>
+    
+    <h3>Contexte :</h3>
+    <p>Vous êtes développeur web junior dans une agence digitale. Pour le compte de l’un de vos clients, vous devez créer un site web dynamique sans utiliser un CMS. Le choix du framework Symfony a été validé par le client.</p>
+    
+    <h3>Mission :</h3>
+    <p>Après une brève présentation du client, le chef de projet vous présente les fonctionnalités attendues.</p>
+    
+    <h4>Front office :</h4>
+    <ul>
+        <li>une page d’accueil essentiellement graphique contenant les 3 dernières actualités</li>
+        <li>une page d’actualités</li>
+        <li>une page pour chaque actualité avec la possibilité de commentaire et de signaler les commentaires</li>
+        <li>une page de présentation du client</li>
+        <li>une page de contact</li>
+        <li>une page d’inscription</li>
+        <li>une page de connexion</li>
+    </ul>
+    
+    <h4>Backoffice :</h4>
+    <ul>
+        <li>gestion des posts</li>
+        <li>gestion des commentaires</li>
+        <li>gestion des utilisateurs</li>
+    </ul>
+    
+    <h3>Livrables :</h3>
+    <ul>
+        <li>Spécifications fonctionnelles du projet</li>
+        <li>Le diagramme de classe de la solution cible</li>
+        <li>Le repository GITHUB du projet</li>
+        <li>Le lien vers l’application hébergée sur le web</li>
+    </ul>
+    
+    <h3>Organisation :</h3>
+    <p>Le projet est réalisé en groupe de 4 personnes.</p>
+    
+    <h3>Technologie :</h3>
+    <p>Symfony 5 ou 6 est utilisé comme framework principal. Les bundles Symfony sont autorisés.</p>
+    </div>
 {% endblock %}
