@@ -39,7 +39,7 @@ class PostController extends AbstractController
         if ($commentForm->isSubmitted() && $commentForm->isValid()) {
             $comment->setPost($post);
             $comment->setAuthor($this->getUser());
-            $comment->setCreatedAt(new \DateTimeImmutable());
+            $comment->setCreatedAt();
 
             $em->persist($comment);
             $em->flush();

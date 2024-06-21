@@ -10,3 +10,22 @@
     {{ form_end(form) }}
     <a href="{{ path('admin_category_new') }}" class="btn btn-primary">Créer une nouvelle catégorie</a>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('lib/tinymce/tinymce.min.js') }}" referrerpolicy="origin"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            tinymce.init({
+                selector: 'textarea.tinymce',
+                plugins: 'lists link image table',
+                toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+                setup: function (editor) {
+                    editor.on('init', function () {
+                        editor.targetElm.setAttribute('name', 'post[content]');
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}

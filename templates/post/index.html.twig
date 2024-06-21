@@ -16,9 +16,9 @@
                 </div>
                 <p>
                     {% if post.content|length > 500 %}
-                        {{ post.content[:500] ~ '...' }}
+                        {{ post.content|raw[:500] ~ '...' }}
                     {% else %}
-                        {{ post.content }}
+                        {{ post.content|raw }}
                     {% endif %}
                     <a href="{{ path('post_show', {'id': post.id}) }}">lire la suite</a>
                 </p>
