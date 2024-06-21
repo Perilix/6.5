@@ -36,9 +36,16 @@ class Comment
     #[ORM\OneToMany(targetEntity: CommentFeedback::class, mappedBy: 'comment', orphanRemoval: true)]
     private Collection $commentFeedback;
 
+    /**
+     * @var Collection<int, CommentReport>
+     */
+    #[ORM\OneToMany(targetEntity: CommentReport::class, mappedBy: 'comment', orphanRemoval: true)]
+    private Collection $commentReports;
+
     public function __construct()
     {
         $this->commentFeedback = new ArrayCollection();
+        $this->commentReports = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -139,5 +146,35 @@ class Comment
         return $this->commentFeedback->filter(function(CommentFeedback $feedback) {
             return $feedback->getType() === 'dislike';
         })->count();
+    }
+
+    /**
+     * @return Collection<int, CommentReport>
+     */
+    public function getCommentReports(): Collection
+    {
+        return $this->commentReports;
+    }
+
+    public function addCommentReport(CommentReport $commentReport): static
+    {
+        if (!$this->commentReports->contains($commentReport)) {
+            $this->commentReports->add($commentReport);
+            $commentReport->setComment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentReport(CommentReport $commentReport): static
+    {
+        if ($this->commentReports->removeElement($commentReport)) {
+            // set the owning side to null (unless already changed)
+            if ($commentReport->getComment() === $this) {
+                $commentReport->setComment(null);
+            }
+        }
+
+        return $this;
     }
 }

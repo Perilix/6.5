@@ -22,8 +22,7 @@ class PostType extends AbstractType
             ->add('category', EntityType::class, [
                 'class' => Category::class,
                 'choice_label' => 'name',
-            ])
-            ->add('save', SubmitType::class, ['label' => 'Publier']);
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

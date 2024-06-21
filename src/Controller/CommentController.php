@@ -3,9 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\CommentFeedback;
+use App\Entity\CommentReport;
+use App\Form\CommentReportType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Comment;
 use App\Repository\PostRepository;
@@ -154,5 +157,28 @@ class CommentController extends AbstractController
         }
 
         $em->flush();
+    }
+
+    #[Route('/comment/report/{id}', name: 'comment_report')]
+    public function report(Comment $comment, Request $request, EntityManagerInterface $em): Response
+    {
+        $report = new CommentReport();
+        $report->setComment($comment);
+        $report->setUser($this->getUser());
+
+        $form = $this->createForm(CommentReportType::class, $report);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($report);
+            $em->flush();
+
+            return $this->redirectToRoute('post_show', ['id' => $comment->getPost()->getId()]);
+        }
+
+        return $this->render('comment/report.html.twig', [
+            'form' => $form->createView(),
+            'comment' => $comment,
+        ]);
     }
 }

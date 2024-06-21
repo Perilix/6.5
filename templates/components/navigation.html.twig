@@ -9,11 +9,11 @@
     </div>
     <ul>
         <li><a href="{{ path('home') }}">Accueil</a></li>
+        <li><a href="{{ path('post_index') }}">Actualités</a></li>
         <li><a href="{{ path('about') }}">À propos</a></li>
         <li><a href="{{ path('contact') }}">Contact</a></li>
-        <li><a href="{{ path('post_index') }}">Articles</a></li>
         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-            <li><a href="{{ path('profile') }}">Profil</a></li>
+            <li><a href="{{ path('profile') }}">Mon profil</a></li>
             {% if is_granted('ROLE_ADMIN') %}
                 <li><a href="{{ path('admin_dashboard') }}">Tableau de bord</a></li>
             {% endif %}

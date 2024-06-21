@@ -18,6 +18,9 @@
             <span class="dislike-count">{{ post.countDislikes() }} dislikes</span>
         {% endif %}
     </div>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('admin_post_edit', {'id': post.id}) }}">Modifier</a>
+    {% endif %}
     <h2>Commentaires</h2>
     <ul id="comment-list">
         {% for comment in post.comments %}
@@ -33,9 +36,16 @@
                             <button type="submit" class="comment-dislike-btn" {% if not is_granted('ROLE_USER_REGISTERED') %}disabled title="Vous devez valider votre e-mail pour pouvoir interagir"{% endif %}>Dislike</button>
                         </form>
                         <span class="comment-dislike-count">{{ comment.countDislikes() }} dislikes</span>
+                        <a href="{{ path('comment_report', {'id': comment.id}) }}">Signaler</a>
                     {% else %}
                         <span class="comment-like-count">{{ comment.countLikes() }} likes</span>
                         <span class="comment-dislike-count">{{ comment.countDislikes() }} dislikes</span>
+                    {% endif %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <form method="post" action="{{ path('admin_comment_delete', {'id': comment.id, 'origin': 'post_show'}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');" style="display:inline-block;">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                        </form>
                     {% endif %}
                 </div>
             </li>
@@ -48,9 +58,4 @@
             {{ form_end(commentForm) }}
         </form>
     {% endif %}
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    <script src="{{ asset('js/comments.js') }}"></script>
 {% endblock %}

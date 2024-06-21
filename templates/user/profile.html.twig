@@ -2,5 +2,47 @@
 
 {% block body %}
     <h1>Bienvenue sur votre profil {{ user.username }}</h1>
-    <p>Email: {{ user.email }}</p>
+
+    <h2>Retrouvez les actualités que vous avez aimées</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Titre</th>
+            <th>Catégorie</th>
+            <th>Date</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for post in likedPosts %}
+            <tr>
+                <td>{{ post.title }}</td>
+                <td>{{ post.category.name }}</td>
+                <td>{{ post.createdAt|date('Y-m-d H:i') }}</td>
+                <td>
+                    <a href="{{ path('post_show', {'id': post.id}) }}">Voir</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Gérer votre profil</h2>
+    {{ form_start(profileForm) }}
+    {{ form_row(profileForm.username) }}
+    {{ form_row(profileForm.email) }}
+    {{ form_row(profileForm.plainPassword.first) }}
+    {{ form_row(profileForm.plainPassword.second) }}
+    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+    {{ form_end(profileForm) }}
+    <form method="post" action="{{ path('delete_account') }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ?');">
+        <input type="hidden" name="_method" value="DELETE">
+        <button type="submit" class="btn btn-danger">Supprimer mon compte</button>
+    </form>
+
+    {% if not user.isVerified %}
+        <form method="post" action="{{ path('resend_verification_email') }}">
+            <button type="submit" class="btn btn-secondary">Renvoyer l'email de vérification</button>
+        </form>
+    {% endif %}
 {% endblock %}

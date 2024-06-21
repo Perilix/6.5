@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des signalements{% endblock %}
+
+{% block body %}
+    <h1>Gestion des signalements</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Date du signalement</th>
+            <th>Raison</th>
+            <th>Utilisateur ayant signalé</th>
+            <th>Auteur du commentaire</th>
+            <th>Commentaire</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for report in reports %}
+            <tr>
+                <td>{{ report.reportedAt|date('Y-m-d H:i') }}</td>
+                <td>{{ report.reason }}</td>
+                <td>{{ report.reportedBy.username }}</td>
+                <td>{{ report.comment.author.username }}</td>
+                <td>{{ report.comment.content }}</td>
+                <td>
+                    <form method="post" action="{{ path('admin_report_delete', {'id': report.id}) }}" style="display:inline-block;">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit">Supprimer le signalement</button>
+                    </form>
+                    <form method="post" action="{{ path('admin_comment_delete', {'id': report.comment.id, 'origin': 'admin_reports'}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');" style="display:inline-block;">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit">Supprimer le commentaire</button>
+                    </form>
+                    <form method="post" action="{{ path('admin_user_ban', {'id': report.comment.author.id}) }}" style="display:inline-block;">
+                        <input type="hidden" name="_method" value="POST">
+                        <button type="submit">Bannir l'auteur</button>
+                    </form>
+                    <form method="post" action="{{ path('admin_user_delete', {'id': report.comment.author.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');" style="display:inline-block;">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit">Supprimer l'utilisateur</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

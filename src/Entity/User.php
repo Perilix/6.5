@@ -61,12 +61,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $banned = false;
 
+    /**
+     * @var Collection<int, CommentReport>
+     */
+    #[ORM\OneToMany(targetEntity: CommentReport::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $commentReports;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $resetToken = null;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->postFeedback = new ArrayCollection();
         $this->commentFeedback = new ArrayCollection();
+        $this->commentReports = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -288,6 +298,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setBanned(bool $banned): self
     {
         $this->banned = $banned;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentReport>
+     */
+    public function getCommentReports(): Collection
+    {
+        return $this->commentReports;
+    }
+
+    public function addCommentReport(CommentReport $commentReport): static
+    {
+        if (!$this->commentReports->contains($commentReport)) {
+            $this->commentReports->add($commentReport);
+            $commentReport->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentReport(CommentReport $commentReport): static
+    {
+        if ($this->commentReports->removeElement($commentReport)) {
+            // set the owning side to null (unless already changed)
+            if ($commentReport->getUser() === $this) {
+                $commentReport->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): static
+    {
+        $this->resetToken = $resetToken;
 
         return $this;
     }

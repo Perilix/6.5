@@ -38,14 +38,14 @@ class Post
     /**
      * @var Collection<int, Comment>
      */
-    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'post')]
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'post', cascade: ['remove'], orphanRemoval: true)]
     private Collection $comments;
 
 
     /**
      * @var Collection<int, PostFeedback>
      */
-    #[ORM\OneToMany(targetEntity: PostFeedback::class, mappedBy: 'post')]
+    #[ORM\OneToMany(targetEntity: PostFeedback::class, mappedBy: 'post', cascade: ['remove'], orphanRemoval: true)]
     private Collection $postFeedback;
 
     public function __construct()
@@ -198,4 +198,15 @@ class Post
             return $feedback->getType() === 'dislike';
         })->count();
     }
+
+    public function getLikes(): int
+    {
+        return $this->countLikes();
+    }
+
+    public function getDislikes(): int
+    {
+        return $this->countDislikes();
+    }
+
 }

@@ -1,9 +1,12 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Publier un nouvel article{% endblock %}
+
 {% block body %}
-    <h1>Create New Post</h1>
+    <h1>Publier un nouvel article</h1>
     {{ form_start(form) }}
     {{ form_widget(form) }}
+    <button type="submit">Publier</button>
     {{ form_end(form) }}
     <a href="{{ path('admin_category_new') }}" class="btn btn-primary">Créer une nouvelle catégorie</a>
 {% endblock %}

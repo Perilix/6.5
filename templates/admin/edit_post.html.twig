@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Modifier l'article</h1>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button type="submit">Sauvegarder</button>
+    {{ form_end(form) }}
+
+    <form method="post" action="{{ path('admin_post_delete', {'id': post.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?');">
+        <input type="hidden" name="_method" value="DELETE">
+        <button type="submit" class="btn btn-danger">Supprimer</button>
+    </form>
+
+    <a href="{{ path('admin_posts') }}">Retour à la liste des articles</a>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des articles{% endblock %}
+
+{% block body %}
+    <h1>Gestion des articles</h1>
+
+    <form method="get" action="{{ path('admin_posts') }}">
+        <input type="text" name="search" placeholder="Rechercher par titre" value="{{ app.request.query.get('search', '') }}">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th><a href="{{ path('admin_posts', {'criteria': 'date', 'order': app.request.query.get('order', 'desc') == 'desc' ? 'asc' : 'desc'}) }}">Date</a></th>
+            <th><a href="{{ path('admin_posts', {'criteria': 'title', 'order': app.request.query.get('order', 'desc') == 'desc' ? 'asc' : 'desc'}) }}">Titre</a></th>
+            <th><a href="{{ path('admin_posts', {'criteria': 'category', 'order': app.request.query.get('order', 'desc') == 'desc' ? 'asc' : 'desc'}) }}">Catégorie</a></th>
+            <th><a href="{{ path('admin_posts', {'criteria': 'likes', 'order': app.request.query.get('order', 'desc') == 'desc' ? 'asc' : 'desc'}) }}">Likes</a></th>
+            <th><a href="{{ path('admin_posts', {'criteria': 'dislikes', 'order': app.request.query.get('order', 'desc') == 'desc' ? 'asc' : 'desc'}) }}">Dislikes</a></th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for post in posts %}
+            <tr data-href="{{ path('post_show', {'id': post.id}) }}">
+                <td>{{ post.createdAt|date('Y-m-d H:i') }}</td>
+                <td>{{ post.title }}</td>
+                <td>{{ post.category.name }}</td>
+                <td>{{ post.likes }}</td>
+                <td>{{ post.dislikes }}</td>
+                <td>
+                    <a href="{{ path('admin_post_edit', {'id': post.id}) }}">Modifier</a>
+                    <form method="post" action="{{ path('admin_post_delete', {'id': post.id}) }}" style="display:inline-block;">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% block javascripts %}
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const rows = document.querySelectorAll("tr[data-href]");
+                rows.forEach(row => {
+                    row.addEventListener("click", () => {
+                        window.location.href = row.dataset.href;
+                    });
+                });
+            });
+        </script>
+    {% endblock %}
+{% endblock %}
