@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : ven. 21 juin 2024 à 01:21
+-- Généré le : sam. 22 juin 2024 à 19:15
 -- Version du serveur : 8.0.31
 -- Version de PHP : 8.2.0
 
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `category` (
 
 INSERT INTO `category` (`id`, `name`) VALUES
 (1, 'blabla'),
-(2, 'zoby');
+(2, 'toto');
 
 -- --------------------------------------------------------
 
@@ -58,15 +58,7 @@ CREATE TABLE IF NOT EXISTS `comment` (
   PRIMARY KEY (`id`),
   KEY `IDX_9474526CF675F31B` (`author_id`),
   KEY `IDX_9474526C4B89032C` (`post_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Déchargement des données de la table `comment`
---
-
-INSERT INTO `comment` (`id`, `post_id`, `author_id`, `content`, `created_at`) VALUES
-(5, 2, 8, 'sqd', '2024-06-21 02:30:12'),
-(6, 2, 8, 'Allo', '2024-06-21 02:37:08');
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -84,6 +76,24 @@ CREATE TABLE IF NOT EXISTS `comment_feedback` (
   KEY `IDX_CF6D275EF8697D13` (`comment_id`),
   KEY `IDX_CF6D275EA76ED395` (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `comment_report`
+--
+
+DROP TABLE IF EXISTS `comment_report`;
+CREATE TABLE IF NOT EXISTS `comment_report` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `comment_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `reason` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` datetime NOT NULL COMMENT '(DC2Type:datetime_immutable)',
+  PRIMARY KEY (`id`),
+  KEY `IDX_E3C2F96F8697D13` (`comment_id`),
+  KEY `IDX_E3C2F96A76ED395` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -109,7 +119,9 @@ INSERT INTO `doctrine_migration_versions` (`version`, `executed_at`, `execution_
 ('DoctrineMigrations\\Version20240620143825', '2024-06-20 16:38:49', 35),
 ('DoctrineMigrations\\Version20240620160154', '2024-06-20 18:02:05', 126),
 ('DoctrineMigrations\\Version20240620224134', '2024-06-21 00:41:47', 345),
-('DoctrineMigrations\\Version20240620234725', '2024-06-21 01:47:39', 31);
+('DoctrineMigrations\\Version20240620234725', '2024-06-21 01:47:39', 31),
+('DoctrineMigrations\\Version20240621114444', '2024-06-21 13:44:59', 159),
+('DoctrineMigrations\\Version20240621134845', '2024-06-21 15:48:53', 57);
 
 -- --------------------------------------------------------
 
@@ -149,14 +161,14 @@ CREATE TABLE IF NOT EXISTS `post` (
   PRIMARY KEY (`id`),
   KEY `IDX_5A8A6C8D12469DE2` (`category_id`),
   KEY `IDX_5A8A6C8DF675F31B` (`author_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Déchargement des données de la table `post`
 --
 
 INSERT INTO `post` (`id`, `category_id`, `author_id`, `title`, `content`, `created_at`) VALUES
-(2, 2, 8, 'Titre', 'Content', '2024-06-21 02:10:30');
+(6, 1, 8, 'La nouvelle version de Symfony', '<h1 style=\"text-align: center;\"><span style=\"font-family: \'book antiqua\', palatino, serif;\"><strong>Symfony 7.1.3</strong></span></h1>\n<hr>\n<p style=\"text-align: center;\">Un article super interessant</p>', '2024-06-21 20:17:42');
 
 -- --------------------------------------------------------
 
@@ -173,14 +185,14 @@ CREATE TABLE IF NOT EXISTS `post_feedback` (
   PRIMARY KEY (`id`),
   KEY `IDX_6DC4CDF94B89032C` (`post_id`),
   KEY `IDX_6DC4CDF9A76ED395` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Déchargement des données de la table `post_feedback`
 --
 
 INSERT INTO `post_feedback` (`id`, `post_id`, `user_id`, `type`) VALUES
-(4, 2, 8, 'like');
+(8, 6, 8, 'like');
 
 -- --------------------------------------------------------
 
@@ -197,6 +209,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `username` varchar(180) COLLATE utf8mb4_unicode_ci NOT NULL,
   `is_verified` tinyint(1) NOT NULL,
   `banned` tinyint(1) NOT NULL,
+  `reset_token` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_8D93D649E7927C74` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -205,9 +218,9 @@ CREATE TABLE IF NOT EXISTS `user` (
 -- Déchargement des données de la table `user`
 --
 
-INSERT INTO `user` (`id`, `email`, `password`, `roles`, `username`, `is_verified`, `banned`) VALUES
-(7, 'a@a.com', '$2y$13$mxlALN/dGyAVW0otxB0er.XEQQka.dK7yK20pHT/3dM2r9gFHz4De', '[\"ROLE_ADMIN\"]', 'coucou', 0, 0),
-(8, 'hugo.juppet@gmail.com', '$2y$13$QUt1Ss7ebVvvrJfVZliBP.5U/1YUq.IMUmHzSaf21Ovk2uwmsPZ2C', '[\"ROLE_USER_REGISTERED\", \"ROLE_ADMIN\"]', 'Hugo', 1, 0);
+INSERT INTO `user` (`id`, `email`, `password`, `roles`, `username`, `is_verified`, `banned`, `reset_token`) VALUES
+(7, 'a@a.com', '$2y$13$mxlALN/dGyAVW0otxB0er.XEQQka.dK7yK20pHT/3dM2r9gFHz4De', '[]', 'coucou', 0, 1, NULL),
+(8, 'hugo.juppet@gmail.com', '$2y$13$XW05.LsLB6NIn0qgia/UounB0RBIkvFhuXW64j83ulXHL/56NYGGu', '[\"ROLE_USER_REGISTERED\", \"ROLE_ADMIN\"]', 'Hugoo', 1, 0, NULL);
 
 --
 -- Contraintes pour les tables déchargées
@@ -226,6 +239,13 @@ ALTER TABLE `comment`
 ALTER TABLE `comment_feedback`
   ADD CONSTRAINT `FK_CF6D275EA76ED395` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   ADD CONSTRAINT `FK_CF6D275EF8697D13` FOREIGN KEY (`comment_id`) REFERENCES `comment` (`id`);
+
+--
+-- Contraintes pour la table `comment_report`
+--
+ALTER TABLE `comment_report`
+  ADD CONSTRAINT `FK_E3C2F96A76ED395` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  ADD CONSTRAINT `FK_E3C2F96F8697D13` FOREIGN KEY (`comment_id`) REFERENCES `comment` (`id`);
 
 --
 -- Contraintes pour la table `post`

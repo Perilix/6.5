@@ -1,5 +1,3 @@
-/* Styles spécifiques pour la page de contact */
-
 /* Conteneur principal */
 .container {
     max-width: 600px;
@@ -50,8 +48,7 @@ form button {
     font-size: 18px;
     cursor: pointer;
     width: 30%;
-    margin: auto;
-    margin-top: 20px;
+    margin: 20px auto auto;
 }
 
 form button:hover {
