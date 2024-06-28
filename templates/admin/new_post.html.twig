@@ -4,10 +4,10 @@
 
 {% block body %}
     <h1>Publier un nouvel article</h1>
-    {{ form_start(form) }}
+    {{ form_start(form, {'attr': {'id': 'post_form'}}) }}
     {{ form_widget(form) }}
     <a href="{{ path('admin_category_new') }}" class="btn btn-primary">Ajouter une catégorie</a>
-    <button type="submit">Publier</button>
+    <button type="submit" id="submit-button" disabled>Publier</button>
     {{ form_end(form) }}
 {% endblock %}
 
@@ -17,14 +17,21 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             tinymce.init({
-                selector: 'textarea.tinymce',
+                selector: 'textarea',
+                license_key: 'gpl',
                 plugins: 'lists link image table',
                 toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
                 setup: function (editor) {
-                    editor.on('init', function () {
-                        editor.targetElm.setAttribute('name', 'post[content]');
+                    editor.on('init', () => {
+                        document.getElementById('submit-button').disabled = false;
+                    });
+                    editor.on('change', () => {
+                        editor.save();
                     });
                 }
+            });
+            document.getElementById('post_form').addEventListener('submit', () => {
+                tinyMCE.triggerSave();
             });
         });
     </script>

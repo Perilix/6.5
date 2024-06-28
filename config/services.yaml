@@ -26,3 +26,5 @@ services:
     App\Security\UserChecker:
         tags:
             - { name: 'security.user_checker', priority: 10 }
+    App\Utils\HtmlTruncation:
+        public: true

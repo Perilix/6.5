@@ -1,20 +1,36 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+{% endblock %}
+
+{% block body_id %}homepage{% endblock %}
 {% block body %}
-    <h1>Les dernières actus</h1>
-    <ul>
-        {% for post in posts %}
-            <li>
-                <a href="{{ path('post_show', {'id': post.id}) }}">{{ post.title }}</a>
-                <div>
-                    <span class="like-count">{{ post.countLikes() }} likes</span>
-                    <span class="dislike-count">{{ post.countDislikes() }} dislikes</span>
-                </div>
-                <p>
-                    {{ post.content|raw }}
-                    <a href="{{ path('post_show', {'id': post.id}) }}">lire la suite</a>
-                </p>
-            </li>
-        {% endfor %}
-    </ul>
+
+    <section class="intro">
+        <h2>Bienvenue sur notre site</h2>
+        <p>Découvrez les dernières actualités et restez à jour avec les nouveautés.</p>
+    </section>
+
+    <section class="news">
+        <h1>Les dernières actus</h1>
+        <div class="posts">
+            {% for post in posts %}
+                <a class="post-card" href="{{ path('post_show', {'id': post.id}) }}">
+                    <h2 class="post-title">{{ post.title }}</h2>
+                    <div class="feedback">
+                        <span class="like-count">
+                            <i class="fas fa-thumbs-up like"></i> {{ post.countLikes() }}
+                        </span>
+                        <span class="dislike-count">
+                            <i class="fas fa-thumbs-down dislike"></i> {{ post.countDislikes() }}
+                        </span>
+                    </div>
+                    <div>
+                        {#{{ post.getTruncatedContent(200) | raw }}#}
+                        {{ post.content|raw }}
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
 {% endblock %}

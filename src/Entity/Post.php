@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PostRepository;
+
+use App\Utils\HtmlTruncation;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -41,17 +43,29 @@ class Post
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'post', cascade: ['remove'], orphanRemoval: true)]
     private Collection $comments;
 
-
     /**
      * @var Collection<int, PostFeedback>
      */
     #[ORM\OneToMany(targetEntity: PostFeedback::class, mappedBy: 'post', cascade: ['remove'], orphanRemoval: true)]
     private Collection $postFeedback;
 
-    public function __construct()
+    private ?HtmlTruncation $htmlTruncation = null;
+
+    public function __construct(HtmlTruncation $htmlTruncation)
     {
+        $this->htmlTruncation = $htmlTruncation;
         $this->comments = new ArrayCollection();
         $this->postFeedback = new ArrayCollection();
+    }
+
+    public function setHtmlTruncation(HtmlTruncation $htmlTruncation): void
+    {
+        $this->htmlTruncation = $htmlTruncation;
+    }
+
+    public function getTruncatedContent($length = 200, $ending = '...')
+    {
+        return $this->htmlTruncation->truncate($this->content, $length, $ending);
     }
 
     #[ORM\PrePersist]
@@ -208,5 +222,6 @@ class Post
     {
         return $this->countDislikes();
     }
+
 
 }

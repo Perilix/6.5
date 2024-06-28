@@ -3,9 +3,9 @@
 {% block body %}
     <h1>Modifier l'article</h1>
 
-    {{ form_start(form) }}
+    {{ form_start(form, {'attr': {'id': 'edit_form'}}) }}
     {{ form_widget(form) }}
-    <button type="submit">Sauvegarder</button>
+    <button type="submit" id="submit-button" disabled>Sauvegarder</button>
     {{ form_end(form) }}
 
     <form method="post" action="{{ path('admin_post_delete', {'id': post.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?');">
@@ -14,4 +14,30 @@
     </form>
 
     <a href="{{ path('admin_posts') }}">Retour à la liste des articles</a>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('lib/tinymce/tinymce.min.js') }}" referrerpolicy="origin"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            tinymce.init({
+                selector: 'textarea',
+                license_key: 'gpl',
+                plugins: 'lists link image table',
+                toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+                setup: function (editor) {
+                    editor.on('init', () => {
+                        document.getElementById('submit-button').disabled = false;
+                    });
+                    editor.on('change', () => {
+                        editor.save();
+                    });
+                }
+            });
+            document.getElementById('edit_form').addEventListener('submit', () => {
+                tinyMCE.triggerSave();
+            });
+        });
+    </script>
 {% endblock %}

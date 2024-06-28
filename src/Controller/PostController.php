@@ -7,6 +7,7 @@ use App\Entity\Post;
 use App\Entity\PostFeedback;
 use App\Form\CommentType;
 use App\Form\PostType;
+use App\Utils\HtmlTruncation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,13 +18,17 @@ use App\Repository\PostRepository;
 class PostController extends AbstractController
 {
     #[Route('/posts', name: 'post_index')]
-    public function index(PostRepository $postRepository, Request $request): Response
+    public function index(PostRepository $postRepository, Request $request, HtmlTruncation $htmlTruncation): Response
     {
         $searchTerm = $request->query->get('search', '');
         $criteria = $request->query->get('criteria', 'date');
         $order = $request->query->get('order', 'desc');
 
         $posts = $postRepository->findByCriteria($criteria, $order, $searchTerm);
+
+        foreach ($posts as $post) {
+            $post->setHtmlTruncation($htmlTruncation);
+        }
 
         return $this->render('post/index.html.twig', [
             'posts' => $posts,
