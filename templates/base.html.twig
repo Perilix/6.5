@@ -10,7 +10,11 @@
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
-    <body>
+
+    {% set body_id = block('body_id') is defined ? block('body_id') : '' %}
+    {% set body_class = block('body_class') is defined ? block('body_class') : '' %}
+
+    <body class="{{ body_class }}" id="{{ body_id }}">
         <header>
             {% include 'components/header.html.twig' %}
         </header>
