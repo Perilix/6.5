@@ -1,5 +1,5 @@
 /* Conteneur principal */
-.container {
+#about .container {
     max-width: 800px;
     margin: 20px auto;
     padding: 20px;
@@ -11,36 +11,39 @@
 }
 
 /* Titres */
-h1, h2, h3, h4 {
+#about h1,
+#about h2,
+#about h3,
+#about h4 {
     color: #333;
 }
 
 /* Paragraphe d'introduction */
-.container p {
+#about .container p {
     font-size: 16px;
     line-height: 1.6;
     margin-bottom: 15px;
 }
 
 /* Listes */
-ul {
+#about ul {
     margin-bottom: 15px;
 }
 
-ul li {
+#about ul li {
     margin-bottom: 8px;
 }
 
 /* Liens */
-a {
+#about a {
     color: #007bff;
     text-decoration: none;
 }
 
-a:hover {
+#about a:hover {
     text-decoration: underline;
 }
 
-.footer {
+#about .footer {
     position: static;
 }

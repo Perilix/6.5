@@ -3,8 +3,10 @@
 // src/Controller/ContactController.php
 namespace App\Controller;
 
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
@@ -28,6 +30,19 @@ class ContactController extends AbstractController
                 ->text($data['message']);
 
             $mailer->send($email);
+
+            // Email to user
+            $userConfirmationEmail = (new TemplatedEmail())
+                ->from(new Address('mailer@biture-numerique.fr', 'WebNews Mail'))
+                ->to($data['email'])
+                ->subject('Confirmation de réception de votre message')
+                ->htmlTemplate('contact/confirmation_email.html.twig')
+                ->context([
+                    'name' => $data['name'],
+                    'message' => $data['message'],
+                ]);
+
+            $mailer->send($userConfirmationEmail);
 
             $this->addFlash('success', 'Votre message a bien été envoyé !');
 

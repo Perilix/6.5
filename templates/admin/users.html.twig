@@ -6,6 +6,7 @@
         <thead>
         <tr>
             <th>ID</th>
+            <th>Pseudo</th>
             <th>Email</th>
             <th>Rôles</th>
             <th>Actions</th>
@@ -15,8 +16,15 @@
         {% for user in users %}
             <tr>
                 <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
                 <td>{{ user.email }}</td>
-                <td>{{ user.roles|json_encode }}</td>
+                <td>
+                    <ul>
+                        {% for role in user.roles %}
+                            <li>{{ role|replace({'ROLE_': ''}) }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
                 <td>
                     <form action="{{ path('admin_user_ban', {'id': user.id}) }}" method="post" style="display:inline;">
                         <button type="submit" {% if user.isBanned %}disabled{% endif %}>Bannir</button>

@@ -15,15 +15,30 @@
             {% include 'components/header.html.twig' %}
         </header>
 
-        {% for label, messages in app.flashes %}
-            <div class="alert alert-{{ label }}">
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-        {% endfor %}
+        <div class="wrapper">
+            {% if is_granted('ROLE_ADMIN') %}
+                <nav class="sidebar">
+                    <p>Administration</p>
+                    <ul>
+                        <li><a href="{{ path('admin_users') }}">Gérer les utilisateurs</a></li>
+                        <li><a href="{{ path('admin_posts') }}">Gérer les articles</a></li>
+                        <li><a href="{{ path('admin_reports') }}">Gérer les signalements</a></li>
+                    </ul>
+                </nav>
+            {% endif %}
+            <main class="main-content{% if is_granted('ROLE_ADMIN') %} with-sidebar{% endif %}">
 
-        {% block body %}{% endblock %}
+                {% for label, messages in app.flashes %}
+                    <div class="alert alert-{{ label }}">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                {% block body %}{% endblock %}
+            </main>
+        </div>
 
         <footer>
             {% include 'components/footer.html.twig' %}

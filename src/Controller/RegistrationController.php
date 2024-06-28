@@ -90,4 +90,33 @@ class RegistrationController extends AbstractController
 
         return $this->redirectToRoute('login');
     }
+
+    #[Route('/resend-verification-email', name: 'resend_verification_email', methods: ['POST'])]
+    public function resendVerificationEmail(UserRepository $userRepository, TranslatorInterface $translator): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$user || $user->isVerified()) {
+            return $this->redirectToRoute('profile');
+        }
+
+        $email = (new TemplatedEmail())
+            ->from(new Address('mailer@biture-numerique.fr', 'WebNews Mail'))
+            ->to($user->getEmail())
+            ->subject('WebNews - Confirmez votre email')
+            ->htmlTemplate('registration/confirmation_email.html.twig');
+
+        try {
+            $this->emailVerifier->sendEmailConfirmation('verify_email', $user, $email);
+        } catch (\Exception $e) {
+            $this->addFlash('error', $translator->trans('email_verification_failed', [], 'messages'));
+            return $this->redirectToRoute('profile');
+        }
+
+        $this->addFlash('success', 'Un nouvel email de vérification a été envoyé.');
+
+        return $this->redirectToRoute('profile');
+    }
+
 }

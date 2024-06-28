@@ -69,9 +69,7 @@ class UserController extends AbstractController
 
             // Update the token if username is changed
             $token = $tokenStorage->getToken();
-            if ($token) {
-                $token->setUser($user);
-            }
+            $token?->setUser($user);
 
             $this->addFlash('success', 'Profil mis à jour avec succès.');
 
