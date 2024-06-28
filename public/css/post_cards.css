@@ -1,0 +1,58 @@
+.posts {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.post-card {
+    display: block;
+    text-decoration: none;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    padding: 20px;
+    width: 30%;
+    transition: transform 0.2s;
+    overflow: hidden;
+    color: inherit;
+}
+
+.post-card:hover {
+    transform: translateY(-10px);
+    color: inherit;
+}
+
+.post-title {
+    font-size: 1.5em;
+    margin: 0;
+}
+
+.feedback {
+    display: flex;
+    justify-content: flex-end;
+    font-size: .7rem;
+}
+
+.like-count, .dislike-count {
+    margin-right: 20px;
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.like-count i, .dislike-count i {
+    margin-right: 5px;
+}
+
+.post-card p {
+    margin: 10px 0;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .post-card {
+        width: 100%;
+    }
+}

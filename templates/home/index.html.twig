@@ -14,23 +14,6 @@
 
     <section class="news">
         <h1>Les dernières actus</h1>
-        <div class="posts">
-            {% for post in posts %}
-                <a class="post-card" href="{{ path('post_show', {'id': post.id}) }}">
-                    <h2 class="post-title">{{ post.title }}</h2>
-                    <div class="feedback">
-                        <span class="like-count">
-                            <i class="fas fa-thumbs-up like"></i> {{ post.countLikes() }}
-                        </span>
-                        <span class="dislike-count">
-                            <i class="fas fa-thumbs-down dislike"></i> {{ post.countDislikes() }}
-                        </span>
-                    </div>
-                    <div>
-                        {#{{ post.getTruncatedContent(200) | raw }}#}
-                        {{ post.content|raw }}
-                    </div>
-                </a>
-            {% endfor %}
-        </div>
+        {% include 'components/_post_cards.html.twig' with {'posts': posts, 'truncateLength': 200} %}
+    </section>
 {% endblock %}
