@@ -16,26 +16,5 @@
         </select>
         <button type="submit">Recherche</button>
     </form>
-    <ul>
-        {% for post in posts %}
-            <li>
-                <a href="{{ path('post_show', {'id': post.id}) }}">{{ post.title }}</a>
-                <div>
-                    <span>{{ post.countLikes() }} likes</span>
-                    <span>{{ post.countDislikes() }} dislikes</span>
-                </div>
-                <p>
-                    {% if post.content|length > 500 %}
-                        {{ post.content|raw[:500] ~ '...' }}
-                    {% else %}
-                        {{ post.content|raw }}
-                    {% endif %}
-                    <a href="{{ path('post_show', {'id': post.id}) }}">lire la suite</a>
-                </p>
-                {% if is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('admin_post_edit', {'id': post.id}) }}">Modifier</a>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
+    {% include 'components/_post_cards.html.twig' with {'posts': posts, 'truncateLength': 500} %}
 {% endblock %}

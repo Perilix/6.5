@@ -3,7 +3,7 @@ namespace App\Utils;
 
 class HtmlTruncation
 {
-    public function truncate($text, $length = 200, $ending = '...')
+    public static function truncate($text, $length = 200, $ending = '...')
     {
         if (strlen(strip_tags($text)) <= $length) {
             return $text;

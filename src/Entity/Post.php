@@ -65,7 +65,7 @@ class Post
 
     public function getTruncatedContent($length = 200, $ending = '...')
     {
-        return $this->htmlTruncation->truncate($this->content, $length, $ending);
+        return HtmlTruncation::truncate($this->content, $length, $ending);
     }
 
     #[ORM\PrePersist]

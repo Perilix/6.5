@@ -1,0 +1,22 @@
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/post_cards.css') }}">
+{% endblock %}
+
+<div class="posts">
+    {% for post in posts %}
+        <a class="post-card" href="{{ path('post_show', {'id': post.id}) }}">
+            <h2 class="post-title">{{ post.title }}</h2>
+            <div class="feedback">
+                <span class="like-count">
+                    <i class="fas fa-thumbs-up like"></i> {{ post.countLikes() }}
+                </span>
+                <span class="dislike-count">
+                    <i class="fas fa-thumbs-down dislike"></i> {{ post.countDislikes() }}
+                </span>
+            </div>
+            <div>
+                {{ post.getTruncatedContent(truncateLength) | raw }}
+            </div>
+        </a>
+    {% endfor %}
+</div>
