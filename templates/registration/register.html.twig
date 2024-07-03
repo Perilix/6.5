@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/register.css') }}">
+{% endblock %}
+
 {% block title %}Nouveau compte{% endblock %}
 
 {% block body %}
@@ -7,6 +11,7 @@
         <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
     {% endfor %}
 
+    <div class="container">
     <h1>S'enregistrer</h1>
 
     {{ form_errors(registrationForm) }}
@@ -19,4 +24,5 @@
 
         <button type="submit" class="btn">Valider</button>
     {{ form_end(registrationForm) }}
+    </div>
 {% endblock %}
